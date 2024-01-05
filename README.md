@@ -69,6 +69,12 @@ SCG는 게이트웨이 구성 및 배포 프로세스를 단순화한다.
 
 SCG는 ```yml``` 및 ```java``` 구성을 통해 구현할 수 있다.
 
+먼저 gradle에 아래 의존성을 추가해주어야 한다.
+
+```
+implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+```
+
 ### yml 방식
 
 ```
