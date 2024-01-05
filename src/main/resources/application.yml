@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: google
+          uri: http://google.com
+          predicates:
+            - Path=/google/{param}
+          filters:
+            - RewritePath=/google(?<segment>/?.*),/search
+            - AddRequestParameter=q,{param}
+        - id: naver
+          uri: http://search.naver.com
+          predicates:
+            - Path=/naver/{param}
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /naver(?<segment>/?.*)
+                replacement: /search.naver
+            - name: AddRequestParameter
+              args:
+                name: query
+                value: '{param}'
