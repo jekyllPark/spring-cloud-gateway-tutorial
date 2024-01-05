@@ -60,7 +60,7 @@ SCG는 게이트웨이 구성 및 배포 프로세스를 단순화한다.
 ## 장 / 단점
 ### 장점
 - 요청을 다른 서버로 라우팅 시키는 것을 간단히 자바 혹은 yml 파일로 구성할 수 있다.
-- Non-blocking 기술 기반
+- Non-blocking 기술 기반 (Netty)
 - 서비스 요청 전/후 필터를 통해 부가 기능 추가를 손 쉽게 구현할 수 있다.
 ### 단점
 - 대상 서버가 많아질 경우, 관리가 어려워질 수 있음.
@@ -96,6 +96,31 @@ spring:
                   args:
                       name: query
                       value: '{param}'
+```
+
+### Java 구성 방식
+```
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class FilterConfig {
+    @Bean
+    public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("google", r -> r.path("/google/{param}")
+                        .filters(f -> f.rewritePath("/google(?<segment>/?.*)", "/search")
+                                .addRequestParameter("q", "{param}"))
+                        .uri("http://google.com"))
+                .route("naver", r -> r.path("/naver/{param}")
+                        .filters(f -> f.rewritePath("/naver(?<segment>/?.*)", "/search.naver")
+                                .addRequestParameter("query", "{param}"))
+                        .uri("http://search.naver.com"))
+                .build();
+    }
+}
 ```
 
 # Ref
